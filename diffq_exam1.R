@@ -10,7 +10,7 @@ library(invgamma)
 
 outputnumber = '1'
 
-setwd("~/Desktop/finalRdir/DPMM/v12")
+setwd("~/density_estimation")
 outputfilecsv = paste("diffq",outputnumber,".csv",sep="")
 outputfile = paste("diffq",outputnumber,".Rdata",sep="")
 
@@ -35,8 +35,17 @@ r.biv.density = function(q){
   return(list(mud=mud, sigma2d=sigma2d))
 }
 
+
+d.biv.density = function(x, y) dnorm(x, mean=meand, sd=musd)*
+  dinvgamma(y, shape=sigma2shape, rate=sigma2rate)
+
+#marginal densities
+d.mu.marginal.density = function(x) dnorm(x, mean=meand, sd=musd)
+d.sigma2.marginal.density = function(y) dinvgamma(y, shape=sigma2shape, rate=sigma2rate)
+
 # d.mu.marginal.density = function(x,mu.grid) density(x, n=length(mu.grid), from=mu.grid[1], to=mu.grid[length(mu.grid)])$y
 # d.sigma2.marginal.density = function(y,sigma2.grid) density(y, n=length(sigma2.grid), from=sigma2.grid[1], to=sigma2.grid[n2])$y
+
 
 source("DPMMfunction.R")
 source("SUREmethods.R")
@@ -76,10 +85,15 @@ alloutput_diffq = foreach(b = 1:B,.combine='cbind',.inorder=FALSE) %dopar% {
   biv.grid[,2] = rep(sigma2.grid,each=n1)
   
 
-  d.biv.true = d.biv.true.kde =c(kde2d(c(mud,mud),c(sigma2d,-sigma2d),n=c(n1,n2),lims=c(range(mu.grid),
+  # true densities on the grid
+  d.biv.true = d.biv.density(biv.grid[,1], biv.grid[,2])
+  d.mu.true = d.mu.marginal.density(mu.grid)
+  d.sigma2.true = d.sigma2.marginal.density(sigma2.grid)
+  
+  d.biv.true.kde =c(kde2d(c(mud,mud),c(sigma2d,-sigma2d),n=c(n1,n2),lims=c(range(mu.grid),
                                                                            range(sigma2.grid)))$z)
-  d.mu.true = d.mu.true.kde = density(mud, n=n1, from=mu.grid[1], to=mu.grid[n1])$y
-  d.sigma2.true = d.sigma2.true.kde = density(c(sigma2d,-sigma2d), n=n2, from=sigma2.grid[1], to=sigma2.grid[n2])$y
+  d.mu.true.kde = density(mud, n=n1, from=mu.grid[1], to=mu.grid[n1])$y
+  d.sigma2.true.kde = density(c(sigma2d,-sigma2d), n=n2, from=sigma2.grid[1], to=sigma2.grid[n2])$y
   
   MISE.biv.kde.true = sum((d.biv.true.kde-d.biv.true)^2)*
     (mu.grid[2]-mu.grid[1])*(sigma2.grid[2]-sigma2.grid[1])
@@ -90,7 +104,7 @@ alloutput_diffq = foreach(b = 1:B,.combine='cbind',.inorder=FALSE) %dopar% {
   MISE.sigma2.kde.true = sum((d.sigma2.true.kde-d.sigma2.true)^2)*
     (sigma2.grid[2]-sigma2.grid[1])
   
-  
+
   #naive density estimation
   avg.loss.mu.est.sample.mean = mean((mud-xbar.vec)^2)
   avg.loss.sigma2d.est.sample.var = mean((sigma2d-S2.vec)^2) 

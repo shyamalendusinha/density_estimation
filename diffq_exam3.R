@@ -10,7 +10,7 @@ library(invgamma)
 
 outputnumber = '3'
 
-setwd("~/Desktop/finalRdir/DPMM/v12")
+setwd("~/density_estimation")
 outputfilecsv = paste("diffq",outputnumber,".csv",sep="")
 outputfile = paste("diffq",outputnumber,".Rdata",sep="")
 
