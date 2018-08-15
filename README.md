@@ -1,4 +1,4 @@
-# Estimate joint density of &mu and &sigma^2
+# Estimate joint density of &mu; and &sigma^2;
 ---
 Store the "density_estimation" folder in your home folder and run it. In each iteration, we ran 40 simulations in parallel.
 
@@ -17,4 +17,4 @@ Normal Mean-Asaf Weinstein, Zhuang Ma, Lawrence D. Brown, Cun-Hui Zhang)
 **bash_script.sh**: Bash script to execute all codes below.
 
 **diffq_exam1.R - diffq_exam6.R**: 6 example
-q=100,200,...,1000, B<sub>q</sub>=100, X<sub>ij</sub> = &mu;<sub>i</sub> + &sigma;<sub>ij</sub> &epsilon;<sub>i</sub>, &sigma;<sub>i</sub> unknown. We are estimating the joint density of &mu and &sigma^2. 
+q=100,200,...,1000, B<sub>q</sub>=100, X<sub>ij</sub> = &mu;<sub>i</sub> + &sigma;<sub>ij</sub> &epsilon;<sub>i</sub>, &sigma;<sub>i</sub> unknown. We are estimating the joint density of &mu; and &sigma^2;. 
